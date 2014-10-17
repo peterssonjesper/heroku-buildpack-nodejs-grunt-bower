@@ -1,7 +1,7 @@
-Heroku Buildpack for Node.js
+Heroku Buildpack for Node.js with Grunt, Bower, and Compass
 ============================
 
-This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Node.js apps. If you fork this repository, please **update this README** to explain what your fork does and why it's special.
+This is a fork of the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Node.js apps. Grunt, Bower, and Compass have been added to the buildpack so that you can keep your dependencies and compiled code out of your repository. 
 
 
 How it Works
@@ -20,71 +20,45 @@ Here's an overview of what this buildpack does:
 - Runs `npm rebuild` if `node_modules` is checked into version control.
 - Always runs `npm install` to ensure [npm script hooks](https://npmjs.org/doc/misc/npm-scripts.html) are executed.
 - Always runs `npm prune` after restoring cached modules to ensure cleanup of unused dependencies.
+- Installs `bower` via `npm`
+- Installs bower components to the directory defined in `.bowerrc` or `bower_components`
+- Caches installed bower components for faster deploys
+- Always runs `bower prune` after restoring cached components to ensure cleanup of unused dependencies.
+- Installs `grunt`
+- Installs the `compass` gem for compiling Sass files to CSS
+- Caches gem for faster deploys
+- Runs the `grunt` task `heroku` or `heroku:$NODE_ENV` if the node env variable has been set
 
 For more technical details, see the [heavily-commented compile script](https://github.com/heroku/heroku-buildpack-nodejs/blob/master/bin/compile).
 
 
-Documentation
--------------
+Usage
+-----
 
-For more information about using Node.js and buildpacks on Heroku, see these Dev Center articles:
+Create a new app with this buildpack:
 
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/nodejs)
-- [10 Habits of a Happy Node Hacker](https://blog.heroku.com/archives/2014/3/11/node-habits)
-- [Buildpacks](https://devcenter.heroku.com/articles/buildpacks)
-- [Buildpack API](https://devcenter.heroku.com/articles/buildpack-api)
+    heroku create myapp --buildpack https://github.com/TeehanLax/heroku-buildpack-nodejs.git
 
+Or add this buildpack to your current app:
 
-Legacy Compatibility
---------------------
+    heroku config:add BUILDPACK_URL=https://github.com/TeehanLax/heroku-buildpack-nodejs.git
+    
+Enable heroku `user-env-compile` lab:
+    
+    heroku labs:enable user-env-compile
 
-For most Node.js apps this buildpack should work just fine. If, however, you're unable to deploy using this new version of the buildpack, you can get your app working again by using the legacy branch:
+Set the `NODE_ENV` environment variable (e.g. `development` or `production`):
 
-```
-heroku config:set BUILDPACK_URL=https://github.com/heroku/heroku-buildpack-nodejs#legacy -a my-app
-git commit -am "empty" --allow-empty # force a git commit
-git push heroku master
-```
+    heroku config:set NODE_ENV=production
 
-Then please open a support ticket at [help.heroku.com](https://help.heroku.com/) so we can diagnose and get your app running on the default buildpack.
+Create your Node.js app and add a Gruntfile named  `Gruntfile.js` (or `Gruntfile.coffee` if you want to use CoffeeScript, or `grunt.js` if you are using Grunt 0.3) with a `heroku` task:
 
-Hacking
--------
+    grunt.registerTask('heroku:development', 'clean less mincss');
+    
+or
 
-To make changes to this buildpack, fork it on Github. Push up changes to your fork, then create a new Heroku app to test it, or configure an existing app to use your buildpack:
+    grunt.registerTask('heroku:production', 'clean less mincss uglify');
 
-```
-# Create a new Heroku app that uses your buildpack
-heroku create --buildpack <your-github-url>
+Push to heroku
 
-# Configure an existing Heroku app to use your buildpack
-heroku config:set BUILDPACK_URL=<your-github-url>
-
-# You can also use a git branch!
-heroku config:set BUILDPACK_URL=<your-github-url>#your-branch
-```
-
-
-Testing
--------
-
-[Anvil](https://github.com/ddollar/anvil) is a generic build server for Heroku.
-
-```
-gem install anvil-cli
-```
-
-The [heroku-anvil CLI plugin](https://github.com/ddollar/heroku-anvil) is a wrapper for anvil.
-
-```
-heroku plugins:install https://github.com/ddollar/heroku-anvil
-```
-
-The [ddollar/test](https://github.com/ddollar/buildpack-test) buildpack runs `bin/test` on your app/buildpack.
-
-```
-heroku build -b ddollar/test # -b can also point to a local directory
-```
-
-For more info on testing, see [Best Practices for Testing Buildpacks](https://discussion.heroku.com/t/best-practices-for-testing-buildpacks/294) on the Heroku discussion forum.
+    git push heroku master
