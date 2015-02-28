@@ -1,7 +1,7 @@
-Heroku Buildpack for Node.js with Grunt, Bower, and Compass
+Heroku Buildpack for Node.js with Grunt, and Bower
 ============================
 
-This is a fork of the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Node.js apps. Grunt, Bower, and Compass have been added to the buildpack so that you can keep your dependencies and compiled code out of your repository. 
+This is a fork of the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Node.js apps. Grunt, and Bower, have been added to the buildpack so that you can keep your dependencies and compiled code out of your repository. 
 
 
 How it Works
@@ -25,8 +25,6 @@ Here's an overview of what this buildpack does:
 - Caches installed bower components for faster deploys
 - Always runs `bower prune` after restoring cached components to ensure cleanup of unused dependencies.
 - Installs `grunt`
-- Installs the `compass` gem for compiling Sass files to CSS
-- Caches gem for faster deploys
 - Runs the `grunt` task `heroku` or `heroku:$NODE_ENV` if the node env variable has been set
 
 For more technical details, see the [heavily-commented compile script](https://github.com/heroku/heroku-buildpack-nodejs/blob/master/bin/compile).
