@@ -25,7 +25,7 @@ Here's an overview of what this buildpack does:
 - Caches installed bower components for faster deploys
 - Always runs `bower prune` after restoring cached components to ensure cleanup of unused dependencies.
 - Installs `grunt`
-- Runs the `grunt` task `heroku` or `heroku:$NODE_ENV` if the node env variable has been set
+- Runs the `grunt` task `build` or `build:$NODE_ENV` if the node env variable has been set
 
 For more technical details, see the [heavily-commented compile script](https://github.com/heroku/heroku-buildpack-nodejs/blob/master/bin/compile).
 
@@ -51,11 +51,11 @@ Set the `NODE_ENV` environment variable (e.g. `development` or `production`):
 
 Create your Node.js app and add a Gruntfile named  `Gruntfile.js` (or `Gruntfile.coffee` if you want to use CoffeeScript, or `grunt.js` if you are using Grunt 0.3) with a `heroku` task:
 
-    grunt.registerTask('heroku:development', 'clean less mincss');
+    grunt.registerTask('build:development', 'clean less mincss');
     
 or
 
-    grunt.registerTask('heroku:production', 'clean less mincss uglify');
+    grunt.registerTask('build:production', 'clean less mincss uglify');
 
 Push to heroku
 

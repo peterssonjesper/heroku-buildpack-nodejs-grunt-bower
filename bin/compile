@@ -212,8 +212,8 @@ echo "export PATH=\"\$HOME/vendor/node/bin:\$HOME/bin:\$HOME/node_modules/.bin:\
       export_env_dir $env_dir
     fi
 
-    status "Running grunt heroku:$NODE_ENV task"
-    $build_dir/node_modules/.bin/grunt heroku:$NODE_ENV
+    status "Running grunt build:$NODE_ENV task"
+    $build_dir/node_modules/.bin/grunt build:$NODE_ENV
   fi
 )
 
